@@ -1,13 +1,21 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StyleSheet } from 'react-native';
+import Dungeon from './screens/Dungeon';
+import Highscores from './screens/Highscores';
+import Home from './screens/Home';
+import Shop from './screens/Shop';
 export default function App() {
+  const Stack = createStackNavigator()
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-    
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name='Highscores' component={Highscores} />
+        <Stack.Screen name='Dungeon' component={Dungeon} />
+        <Stack.Screen name='Shop' component={Shop} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
