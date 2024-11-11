@@ -6,12 +6,12 @@ export default function Home({ navigation }) {
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home</Text>
       <Button
-        title="Go to Dungeon"
-        onPress={() => navigation.navigate('Dungeon')}
+        title='Go to Create Hero'
+        onPress={() => navigation.navigate('CreateHero')}
       />
       <Button
-        title="Go to Shop"
-        onPress={() => navigation.navigate('Shop')}
+        title='Go to Choose Hero'
+        onPress={() => navigation.navigate('ChooseHero')}
       />
       <Button
         title="Go to Highscores"
