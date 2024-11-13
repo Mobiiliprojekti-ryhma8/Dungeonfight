@@ -2,6 +2,7 @@ import { View, Text, Button, TextInput, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
 import { addHero } from '../firebase/Config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreateCharacter = () => {
   const [name, setName] = useState('');
@@ -19,9 +20,20 @@ const CreateCharacter = () => {
       damage = 5;
     }
 
+  const hero = { name, heroClass, gold: 0, health, damage }
+
     try {
       await addHero(name, heroClass, 0, health, damage);
+      const storedHeroes = await AsyncStorage.getItem('heroes');
+      const heroes = storedHeroes ? JSON.parse(storedHeroes) : [];
+
+      heroes.push(hero);
+
+      await AsyncStorage.setItem('heroes', JSON.stringify(heroes));
+      console.log(heroes)
       Alert.alert(`${heroClass} has been created!`);
+      setName('');
+      setHeroClass('');
     } catch (error) {
       console.error('Error creating hero:', error);
       Alert.alert('Failed to create hero');
