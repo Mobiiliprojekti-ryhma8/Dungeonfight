@@ -9,6 +9,24 @@ const CreateCharacter = () => {
   const [heroClass, setHeroClass] = useState('');
 
   const handleCreateHero = async () => {
+    if(heroClass === '') {
+      Alert.alert('Please select class.')
+      return
+    }
+
+    if(name === '') {
+      Alert.alert('Please give your hero a name.')
+      return
+    }
+
+    const storedHeroes = await AsyncStorage.getItem('heroes');
+    const heroes = storedHeroes ? JSON.parse(storedHeroes) : [];
+
+    if (heroes.some(hero => hero.name.toLowerCase() === name.toLowerCase())) {
+      Alert.alert('This name already exists. Please choose a different name.')
+      return
+    }
+
     let health = 0;
     let damage = 0;
 
@@ -24,8 +42,6 @@ const CreateCharacter = () => {
 
     try {
       await addHero(name, heroClass, 0, health, damage);
-      const storedHeroes = await AsyncStorage.getItem('heroes');
-      const heroes = storedHeroes ? JSON.parse(storedHeroes) : [];
 
       heroes.push(hero);
 
