@@ -2,7 +2,7 @@ import { View, Text, Button, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export default function ChooseHero() {
+export default function ChooseHero({navigation}) {
   const [heroes, setHeroes] = useState([])
 
   useEffect(() => {
@@ -26,7 +26,9 @@ export default function ChooseHero() {
       <Text>Gold: {item.gold}</Text>
       <Text>Health: {item.health}</Text>
       <Text>Damage: {item.damage}</Text>
-      <Button title='Choose Hero'></Button>
+      <Button title='Choose Hero'
+        onPress={() => navigation.navigate('StartDungeon', { hero: item })}
+      ></Button>
     </View>
   );
 
