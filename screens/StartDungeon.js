@@ -1,7 +1,9 @@
 import { View, Text, Button } from 'react-native'
 import React, { useLayoutEffect } from 'react'
 
-export default function StartDungeon({navigation}) {
+export default function StartDungeon({navigation, route}) {
+  const { hero } = route.params
+  console.log(hero)
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -19,7 +21,7 @@ export default function StartDungeon({navigation}) {
       <Text>StartDungeon</Text>
       <Button
         title="Start Dungeon"
-        onPress={() => navigation.navigate('Dungeon')}
+        onPress={() => navigation.navigate('Dungeon', {hero})}
       />
       <Button
         title="Go to Shop"

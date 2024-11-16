@@ -5,7 +5,10 @@ import warriorImage from '../assets/Warrior.webp';
 import monsterImage1 from '../assets/Enemy1.webp';
 import backgroundImage from '../assets/background.jpg';
 
-function Dungeon({ navigation }) {
+function Dungeon({ navigation, route }) {
+    const {hero} = route.params
+    console.log(hero)
+
     const [playerHealth, setPlayerHealth] = useState(20);
     const [enemyHealth, setEnemyHealth] = useState(10);
     const [enemyCount, setEnemyCount] = useState(1);
