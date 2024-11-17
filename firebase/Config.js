@@ -1,6 +1,6 @@
-import { initializeApp, getApp, getApps } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_APP_ID } from '@env';
+import { FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_AUTH_DOMAIN, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET } from '@env';
+import { getApp, getApps, initializeApp } from "firebase/app";
+import { addDoc, collection, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
@@ -34,10 +34,47 @@ async function addHero(name, heroClass, gold, health, damage) {
     console.error("Error adding hero: ", e);
   }
 }
+async function HighscoresCall(heroClass = null) {
+  console.log("Fetching heroes...");
+  let heroesList = [];
+  let id = 1;
+
+  try {
+    let heroesQuery;
+
+    
+      // Get all heroes first
+      heroesQuery = query(heroesCollection, orderBy("gold", "desc"));
+    
+
+    const snapshot = await getDocs(heroesQuery);
+
+    snapshot.forEach((doc) => {
+      const hero = {
+        id: id,
+        name: doc.data().name,
+        class: doc.data().class,
+        gold: doc.data().gold,
+      };
+      // If a heroClass filter is set, apply it manually
+      if (!heroClass || hero.class === heroClass) {
+        heroesList.push(hero);
+        id += 1;
+      }
+    });
+
+    //console.log("Heroes fetched:", heroesList);
+    return heroesList;
+  } catch (error) {
+    console.error("Error searching the highscores:", error);
+    return []; // Return an empty list if an error occurs
+  }
+}
+
+
 
 export {
-  firestore,
-  collection,
   addDoc,
-  addHero
+  addHero, collection, firestore, HighscoresCall
 };
+
