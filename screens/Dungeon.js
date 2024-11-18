@@ -9,11 +9,13 @@ function Dungeon({ navigation, route }) {
     const {hero} = route.params
     console.log(hero)
 
-    const [playerHealth, setPlayerHealth] = useState(20);
+    const maxHp = hero.heroClass === "warrior" ? 25 : 20
+
+    const [playerHealth, setPlayerHealth] = useState(hero.health);
     const [enemyHealth, setEnemyHealth] = useState(10);
     const [enemyCount, setEnemyCount] = useState(1);
     const [healUses, setHealUses] = useState(3);
-    const [playerDamage, setPlayerDamage] = useState(0);
+    const [playerDamage, setPlayerDamage] = useState(hero.damage);
     const [enemyDamage, setEnemyDamage] = useState(0);
     const [isGameFinished, setIsGameFinished] = useState(false);
     const [victory, setVictory] = useState(false); 
@@ -40,7 +42,11 @@ function Dungeon({ navigation, route }) {
     }, [navigation, isGameFinished]);
 
     const handleFight = () => {
-        const playerDamageValue = Math.floor(Math.random() * 5) + 1; // Player damage between 1 and 5
+        const randNum = Math.floor(Math.random() * 5) + 1
+        const playerDamageValue = hero.heroClass === "wizard" ? randNum + 2 : randNum
+        console.log(playerDamageValue)
+
+        //const playerDamageValue = Math.floor(Math.random() * 5) + 1; // Player damage between 1 and 5
         const enemyDamageValue = Math.floor(Math.random() * 3) + 1; // Enemy damage between 1 and 3
 
         setPlayerDamage(playerDamageValue);
@@ -83,7 +89,7 @@ function Dungeon({ navigation, route }) {
 
     const handleHeal = () => {
         if (healUses > 0 && playerHealth < 20) {
-            setPlayerHealth(20);
+            setPlayerHealth(maxHp);
             setHealUses(healUses - 1);
         }
     };
@@ -99,12 +105,12 @@ function Dungeon({ navigation, route }) {
                 <Image source={monsterImage1} style={styles.monster} />
 
                 <View style={styles.playerContainer}>
-                    <Text style={styles.playerHealth}>Your Health: {playerHealth}/20</Text>
+                    <Text style={styles.playerHealth}>Your Health: {playerHealth}/{maxHp}</Text>
                     <Button title="Fight" onPress={handleFight} disabled={isGameFinished} />
                     <Button 
                         title={`Heal (${healUses})`} 
                         onPress={handleHeal} 
-                        disabled={healUses === 0 || playerHealth === 20 || isGameFinished} 
+                        disabled={healUses === 0 || playerHealth === maxHp || isGameFinished} 
                     />
                 </View>
                 
