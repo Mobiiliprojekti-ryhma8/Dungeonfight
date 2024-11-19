@@ -8,11 +8,65 @@ import Shop from './screens/Shop';
 import CreateHero from './screens/CreateHero';
 import StartDungeon from './screens/StartDungeon';
 import ChooseHero from './screens/ChooseHero';
+import { Audio } from "expo-av";
+import { useEffect, useRef, useState } from 'react';
 
 export default function App() {
+  const soundRef = useRef(null)
+  const [currentRoute, setCurrentRoute] = useState("Home")
+
+  useEffect(() => {
+    const setupAudio = async () => {
+      try {
+        await Audio.setAudioModeAsync({
+          staysActiveInBackground: true,
+          shouldDuckAndroid: false,
+          playsInSilentModeIOS: true,
+        })
+
+        if (!soundRef.current) {
+          const { sound } = await Audio.Sound.createAsync(
+            require('./audio/soundtrack.mp3'),
+            { shouldPlay: true, isLooping: true }
+          )
+
+          soundRef.current = sound
+          await sound.playAsync()
+        }
+      } catch (error) {
+        console.error("Error loading or playing audio", error)
+      }
+    }
+
+    setupAudio()
+
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.stopAsync()
+        soundRef.current.unloadAsync()
+      }
+    }
+
+  }, [])
+
+  useEffect(() => {
+    if (soundRef.current) {
+      if (currentRoute === "Dungeon") {
+        soundRef.current.pauseAsync()
+      } else {
+        soundRef.current.playAsync()
+      }
+    }
+  }, [currentRoute])
+
   const Stack = createStackNavigator()
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      onStateChange={(state) => {
+        const current = state.routes[state.index].name
+        setCurrentRoute(current)
+    }}
+    >
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="CreateHero" component={CreateHero}/>
