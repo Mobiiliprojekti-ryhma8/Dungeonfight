@@ -22,7 +22,7 @@ export default function Highscores({ navigation }) {
   }
   const Item = ({ hero }) => (
     <View>
-        <Text style={styles.herolist}>{hero.id+" "}{hero.name+" "} {"Gold "+ hero.gold} {hero.class}</Text>
+        <Text style={styles.herolist}>{hero.id+" "}{hero.name+" "} {"monsters defeated "+ hero.monsters_defeated}</Text>
     </View>
 );
   return (
