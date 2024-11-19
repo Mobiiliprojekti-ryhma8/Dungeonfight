@@ -1,8 +1,8 @@
-import { View, Text, Button, TextInput, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
+import { Alert, Button, Text, TextInput, View } from 'react-native';
 import { addHero } from '../firebase/Config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreateCharacter = () => {
   const [name, setName] = useState('');
@@ -29,7 +29,8 @@ const CreateCharacter = () => {
 
     let health = 0;
     let damage = 0;
-
+    let level = 1;
+    let monsters_defeated = 0;
     if (heroClass === 'warrior') {
       health = 25;
       damage = 3;
@@ -38,10 +39,10 @@ const CreateCharacter = () => {
       damage = 5;
     }
 
-  const hero = { name, heroClass, gold: 0, health, damage }
+  const hero = { name, heroClass, gold: 0, health, damage,level,monsters_defeated }
 
     try {
-      await addHero(name, heroClass, 0, health, damage);
+      await addHero(name, heroClass, 0, health, damage,level,monsters_defeated);
 
       heroes.push(hero);
 

@@ -21,14 +21,16 @@ const firestore = getFirestore();
 
 const heroesCollection = collection(firestore, "heroes");
 
-async function addHero(name, heroClass, gold, health, damage) {
+async function addHero(name, heroClass, gold, health, damage,level,monsters_defeated ) {
   try {
     const docRef = await addDoc(heroesCollection, {
       name: name,
       class: heroClass,
       gold: gold,
       health: health,
-      damage: damage
+      damage: damage,
+      level: level,
+      monsters_defeated: monsters_defeated
     });
   } catch (e) {
     console.error("Error adding hero: ", e);
@@ -44,7 +46,7 @@ async function HighscoresCall(heroClass = null) {
 
     
       // Get all heroes first
-      heroesQuery = query(heroesCollection, orderBy("gold", "desc"));
+      heroesQuery = query(heroesCollection, orderBy("monsters_defeated", "desc"));
     
 
     const snapshot = await getDocs(heroesQuery);
@@ -54,7 +56,8 @@ async function HighscoresCall(heroClass = null) {
         id: id,
         name: doc.data().name,
         class: doc.data().class,
-        gold: doc.data().gold,
+        monsters_defeated: doc.data().monsters_defeated,
+        level: doc.data().level
       };
       // If a heroClass filter is set, apply it manually
       if (!heroClass || hero.class === heroClass) {
