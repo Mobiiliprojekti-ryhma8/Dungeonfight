@@ -1,7 +1,8 @@
-import { View, Text, Button, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import React, { useEffect, useState } from 'react';
+import { Alert, Button, FlatList, Text, View } from 'react-native';
+import { deleteHeroFromDatabase } from '../firebase/Config';
 export default function ChooseHero({navigation}) {
   const [heroes, setHeroes] = useState([])
 
@@ -11,6 +12,8 @@ export default function ChooseHero({navigation}) {
         const storedHeroes = await AsyncStorage.getItem('heroes')
         const heroesList = storedHeroes ? JSON.parse(storedHeroes) : []
         setHeroes(heroesList)
+        console.log("heroesList",heroesList);
+        
       } catch (error) {
         console.error(error)
       }
@@ -18,7 +21,23 @@ export default function ChooseHero({navigation}) {
 
     fetchHeroes()
   }, [])
-
+  async function deleteCharacter(item) {
+    console.log(item);
+    
+    try {
+      await deleteHeroFromDatabase(item.name)
+      const storedHeroes = await AsyncStorage.getItem('heroes')
+      const heroesList = storedHeroes ? JSON.parse(storedHeroes) : []
+      const newList = heroesList.filter(hero => hero.name !== item.name)
+      await AsyncStorage.setItem('heroes', JSON.stringify(newList));
+      console.log("success:",item.name);
+      Alert.alert("Hero named:",item.name+ " deleted");
+      navigation.replace('ChooseHero');
+    } catch (error) {
+      console.log("Error deleting hero",item.name+":",error);
+      
+    }
+  }
   const renderHero = ({ item }) => (
     <View style={{ padding: 10, borderBottomWidth: 1, borderColor: 'gray' }}>
       <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.name}</Text>
@@ -28,6 +47,11 @@ export default function ChooseHero({navigation}) {
       <Text>Damage: {item.damage}</Text>
       <Button title='Choose Hero'
         onPress={() => navigation.navigate('StartDungeon', { hero: item })}
+      ></Button>
+      <Button title='Delete Hero'
+        color="red"
+        onPress={() => {deleteCharacter(item)}
+        } 
       ></Button>
     </View>
   );
