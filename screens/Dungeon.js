@@ -4,11 +4,11 @@ import DamageAnimation from '../animations/DamageAnimation';
 import warriorImage from '../assets/Warrior.webp';
 import monsterImage1 from '../assets/Enemy1.webp';
 import backgroundImage from '../assets/background.jpg';
+import { Audio } from "expo-av";
 
 function Dungeon({ navigation, route }) {
     const {hero} = route.params
-    console.log(hero)
-
+    const soundRef = useRef(null)
     const maxHp = hero.heroClass === "warrior" ? 25 : 20
 
     const [playerHealth, setPlayerHealth] = useState(hero.health);
@@ -20,6 +20,32 @@ function Dungeon({ navigation, route }) {
     const [isGameFinished, setIsGameFinished] = useState(false);
     const [victory, setVictory] = useState(false); 
     const [damageKey, setDamageKey] = useState(0);
+
+    useEffect(() => {
+        const setupDungeonAudio = async () => {
+            try {
+                if (!soundRef.current) {
+                    const { sound } = await Audio.Sound.createAsync(
+                        require('../audio/soundtrack2.mp3'),
+                        { shouldPlay: true, isLooping: true }
+                    )
+                    soundRef.current = sound
+                    await sound.playAsync()
+                }
+            } catch (error) {
+                console.error("Error loading or playing dungeon audio", error)
+            }
+        }
+
+        setupDungeonAudio()
+
+        return () => {
+            if (soundRef.current) {
+                soundRef.current.stopAsync()
+                soundRef.current.unloadAsync()
+            }
+        }
+    }, [])
 
     useEffect(() => {
         if (!isGameFinished) {
