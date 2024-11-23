@@ -25,7 +25,7 @@ export default function StartDungeon({navigation, route}) {
       />
       <Button
         title="Go to Shop"
-        onPress={() => navigation.navigate('Shop')}
+        onPress={() => navigation.navigate('Shop', {hero})}
       />
     </View>
   )

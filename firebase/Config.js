@@ -1,6 +1,6 @@
 import { FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_AUTH_DOMAIN, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET } from '@env';
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { addDoc, collection, deleteDoc, getDocs, getFirestore, orderBy, query, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, getDocs, getFirestore, orderBy, query, where, updateDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
@@ -87,8 +87,33 @@ async function deleteHeroFromDatabase(name){
   }
 }
 
+async function updateHero(name, item) {
+  try {
+    const heroesQuery = query(heroesCollection, where("name", "==", name));
+    const snapshot = await getDocs(heroesQuery);
+
+    snapshot.forEach(async (docSnapshot) => {
+      const heroData = docSnapshot.data();
+
+      const updatedData = {};
+
+      if (item === 'health') {
+        updatedData.health = heroData.health + 1
+        updatedData.gold = heroData.gold - 100
+      } else if (item === 'damage') {
+        updatedData.damage = heroData.damage + 1
+        updatedData.gold = heroData.gold - 100
+      }
+
+      await updateDoc(docSnapshot.ref, updatedData);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export {
   addDoc,
-  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall
+  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateHero
 };
 
