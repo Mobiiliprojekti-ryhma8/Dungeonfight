@@ -1,26 +1,29 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Alert, Button, FlatList, Text, View } from 'react-native';
 import { deleteHeroFromDatabase } from '../firebase/Config';
+import { useFocusEffect } from '@react-navigation/native';
+
 export default function ChooseHero({navigation}) {
   const [heroes, setHeroes] = useState([])
 
-  useEffect(() => {
-    const fetchHeroes = async () => {
-      try {
-        const storedHeroes = await AsyncStorage.getItem('heroes')
-        const heroesList = storedHeroes ? JSON.parse(storedHeroes) : []
-        setHeroes(heroesList)
-        console.log("heroesList",heroesList);
-        
-      } catch (error) {
-        console.error(error)
-      }
+  const fetchHeroes = async () => {
+    try {
+      const storedHeroes = await AsyncStorage.getItem('heroes');
+      const heroesList = storedHeroes ? JSON.parse(storedHeroes) : [];
+      setHeroes(heroesList);
+    } catch (error) {
+      console.error(error);
     }
+  };
 
-    fetchHeroes()
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      fetchHeroes();
+    }, [])
+  );
+
   async function deleteCharacter(item) {
     console.log(item);
     

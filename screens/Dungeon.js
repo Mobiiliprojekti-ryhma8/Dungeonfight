@@ -9,7 +9,7 @@ import { Audio } from "expo-av";
 function Dungeon({ navigation, route }) {
     const {hero} = route.params
     const soundRef = useRef(null)
-    const maxHp = hero.heroClass === "warrior" ? 25 : 20
+    const maxHp = hero.health
 
     const [playerHealth, setPlayerHealth] = useState(hero.health);
     const [enemyHealth, setEnemyHealth] = useState(10);
@@ -68,9 +68,8 @@ function Dungeon({ navigation, route }) {
     }, [navigation, isGameFinished]);
 
     const handleFight = () => {
-        const randNum = Math.floor(Math.random() * 5) + 1
-        const playerDamageValue = hero.heroClass === "wizard" ? randNum + 2 : randNum
-        console.log(playerDamageValue)
+        const playerDamageValue = Math.floor(Math.random() * hero.damage) + 1
+        console.log(hero.damage)
 
         //const playerDamageValue = Math.floor(Math.random() * 5) + 1; // Player damage between 1 and 5
         const enemyDamageValue = Math.floor(Math.random() * 3) + 1; // Enemy damage between 1 and 3
@@ -114,7 +113,7 @@ function Dungeon({ navigation, route }) {
     };
 
     const handleHeal = () => {
-        if (healUses > 0 && playerHealth < 20) {
+        if (healUses > 0 && playerHealth < maxHp) {
             setPlayerHealth(maxHp);
             setHealUses(healUses - 1);
         }
