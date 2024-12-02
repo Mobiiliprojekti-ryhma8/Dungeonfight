@@ -7,6 +7,8 @@ import backgroundImage from '../assets/background.jpg';
 import { Audio } from "expo-av";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { updateGold } from '../firebase/Config';
 
 function Dungeon({ navigation, route }) {
     const {hero} = route.params
@@ -24,6 +26,7 @@ function Dungeon({ navigation, route }) {
     const [damageKey, setDamageKey] = useState(0);
     const [volume, setVolume] = useState(1); 
     const [isMuted, setIsMuted] = useState(false); 
+    const [totalGold, setGold] = useState(0)
 
     useEffect(() => {
         const setupDungeonAudio = async () => {
@@ -52,6 +55,34 @@ function Dungeon({ navigation, route }) {
         }
     }, [])
 
+    const saveHeroToStorage = async (updatedHero) => {
+        try {
+          const storedHeroes = await AsyncStorage.getItem('heroes');
+          const heroes = storedHeroes ? JSON.parse(storedHeroes) : [];
+          const heroIndex = heroes.findIndex((h) => h.name === updatedHero.name);
+      
+          if (heroIndex !== -1) {
+            heroes[heroIndex] = updatedHero;
+          } else {
+            heroes.push(updatedHero);
+          }
+      
+          await AsyncStorage.setItem('heroes', JSON.stringify(heroes));
+        } catch (error) {
+          console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        const updateHeroGold = async () => {
+            hero.gold += totalGold;
+            await saveHeroToStorage(hero);
+            updateGold(hero.name, hero.gold)
+        };
+    
+        updateHeroGold();
+    }, [totalGold]);
+
     useEffect(() => {
         if (!isGameFinished) {
             const unsubscribe = navigation.addListener('beforeRemove', (e) => {
@@ -63,7 +94,12 @@ function Dungeon({ navigation, route }) {
                     "Leaving now will result in the hero's death. Are you sure you want to exit?",
                     [
                         { text: "No", style: "cancel" },
-                        { text: "Yes", onPress: () => navigation.dispatch(e.data.action) },
+                        {
+                            text: "Yes",
+                            onPress: () => {
+                                navigation.dispatch(e.data.action);
+                            },
+                        },
                     ]
                 );
             });
@@ -71,6 +107,24 @@ function Dungeon({ navigation, route }) {
             return unsubscribe;
         }
     }, [navigation, isGameFinished]);
+
+    const generateDrop = () => {
+        const randPercentage = Math.random() * 100;
+        let dropValue;
+    
+        if (randPercentage <= 50) {
+            // This has a 50% chance of happening, generates gold between 1 and 50
+            dropValue = Math.floor(Math.random() * 50) + 1;
+        } else if (randPercentage <= 80) {
+            // 30% chance of happening, generates gold between 51 and 80
+            dropValue = Math.floor(Math.random() * 30) + 51;
+        } else {
+            // 20% chance of happening, generaets gold between 81 and 100
+            dropValue = Math.floor(Math.random() * 20) + 81;
+        }
+    
+        return dropValue;
+    };
 
     const handleFight = () => {
         const playerDamageValue = Math.floor(Math.random() * hero.damage) + 1
@@ -94,8 +148,11 @@ function Dungeon({ navigation, route }) {
                 { text: "OK", onPress: () => navigation.navigate("Home") }
             ]);
         } else if (enemyHealth - playerDamageValue <= 0) {
+            const dropValue = generateDrop();
+            setGold(dropValue);
+            console.log(`gold ${totalGold}`)
             setVictory(true);
-            Alert.alert("Victory!", `You defeated Monster ${enemyCount}!`, [
+            Alert.alert("Victory!", `You defeated Monster ${enemyCount} and got ${dropValue} gold!`, [
                 {
                     text: "OK", onPress: () => {
                         if (enemyCount < 5) {
