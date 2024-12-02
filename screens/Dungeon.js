@@ -5,6 +5,8 @@ import warriorImage from '../assets/Warrior.webp';
 import monsterImage1 from '../assets/Enemy1.webp';
 import backgroundImage from '../assets/background.jpg';
 import { Audio } from "expo-av";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Slider from '@react-native-community/slider';
 
 function Dungeon({ navigation, route }) {
     const {hero} = route.params
@@ -20,6 +22,8 @@ function Dungeon({ navigation, route }) {
     const [isGameFinished, setIsGameFinished] = useState(false);
     const [victory, setVictory] = useState(false); 
     const [damageKey, setDamageKey] = useState(0);
+    const [volume, setVolume] = useState(1); 
+    const [isMuted, setIsMuted] = useState(false); 
 
     useEffect(() => {
         const setupDungeonAudio = async () => {
@@ -31,6 +35,7 @@ function Dungeon({ navigation, route }) {
                     )
                     soundRef.current = sound
                     await sound.playAsync()
+                    sound.setVolumeAsync(volume);
                 }
             } catch (error) {
                 console.error("Error loading or playing dungeon audio", error)
@@ -119,6 +124,27 @@ function Dungeon({ navigation, route }) {
         }
     };
 
+    const toggleMute = () => {
+        const newMuteState = !isMuted;
+        setIsMuted(newMuteState);
+    
+        const newVolume = newMuteState ? 0 : volume;
+        setVolume(newVolume);
+    
+        if (soundRef.current) {
+            soundRef.current.setVolumeAsync(newVolume);
+        }
+    };
+
+    const adjustVolume = async (newVolume) => {
+        setVolume(newVolume);
+        setIsMuted(newVolume === 0); 
+    
+        if (soundRef.current) {
+            await soundRef.current.setVolumeAsync(newVolume); 
+        }
+    };
+
     return (
         <ImageBackground source={backgroundImage} style={styles.background}>
             <View style={styles.container}>
@@ -144,6 +170,25 @@ function Dungeon({ navigation, route }) {
                 <DamageAnimation key={`enemy-damage-${damageKey}`} damage={enemyDamage} isPlayerDamage={true} />
 
                 <DamageAnimation key={`player-damage-${damageKey}`} damage={playerDamage} isPlayerDamage={false} />
+
+                <View style={styles.audioControlContainer}>
+                    <Ionicons
+                        name={isMuted ? "volume-mute" : "volume-high"}
+                        size={30}
+                        color="white"
+                        onPress={toggleMute}
+                    />
+                    {!isMuted && (
+                        <Slider
+                            style={styles.slider}
+                            minimumValue={0}
+                            maximumValue={1}
+                            value={volume}
+                            onValueChange={adjustVolume}
+                            step={0.01}
+                        />
+                    )}
+                </View>
             </View>
         </ImageBackground>
     );
@@ -204,6 +249,16 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         resizeMode: 'contain',
+    },
+    audioControlContainer: {
+        position: 'absolute',
+        top: 20, 
+        right: 20,  
+        alignItems: 'center',
+    },
+    slider: {
+        width: 200,
+        marginTop: 10,  
     },
 });
 
