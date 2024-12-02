@@ -112,8 +112,26 @@ async function updateHero(name, item) {
   }
 }
 
+async function updateGold(name, amount) {
+  try {
+    const heroesQuery = query(heroesCollection, where("name", "==", name));
+    const snapshot = await getDocs(heroesQuery);
+
+    snapshot.forEach(async (docSnapshot) => {
+
+      const updatedData = {};
+
+      updatedData.gold = amount
+
+      await updateDoc(docSnapshot.ref, updatedData);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export {
   addDoc,
-  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateHero
+  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateHero, updateGold
 };
 
