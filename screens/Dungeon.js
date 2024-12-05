@@ -27,6 +27,9 @@ function Dungeon({ navigation, route }) {
     const [volume, setVolume] = useState(1); 
     const [isMuted, setIsMuted] = useState(false); 
     const [totalGold, setGold] = useState(0)
+    const [level, setLevel] = useState(1);
+    const [enemyMaxHealth, setEnemyMaxHealth] = useState(10); 
+
 
     useEffect(() => {
         const setupDungeonAudio = async () => {
@@ -131,7 +134,7 @@ function Dungeon({ navigation, route }) {
         console.log(hero.damage)
 
         //const playerDamageValue = Math.floor(Math.random() * 5) + 1; // Player damage between 1 and 5
-        const enemyDamageValue = Math.floor(Math.random() * 3) + 1; // Enemy damage between 1 and 3
+        const enemyDamageValue = Math.floor(Math.random() * 3) + level; // Enemy damage between 1 and 3
 
         setPlayerDamage(playerDamageValue);
         setEnemyDamage(enemyDamageValue);
@@ -158,15 +161,19 @@ function Dungeon({ navigation, route }) {
                         if (enemyCount < 5) {
                             setEnemyCount(enemyCount + 1);
                             setVictory(false);
-                            setEnemyHealth(10);
+                            setEnemyHealth(prevHealth => 5 + (level * 5)); 
+                            const newEnemyMaxHealth = 5 + (level * 5);
+                            setEnemyMaxHealth(newEnemyMaxHealth);
                         } else {
-                            setIsGameFinished(true);
-                            Alert.alert("Congratulations!", "You have defeated all enemies!", [
-                                {
-                                    text: "Back to Home",
-                                    onPress: () => navigation.navigate("Home")
-                                }
-                            ]);
+                            setLevel(prevLevel => {
+                                Alert.alert(`Congratulations, you beat level ${level}! Next level enemies are stronger.`)
+                                const newLevel = prevLevel + 1;
+                                setEnemyHealth(5 + (newLevel * 5)); 
+                                const newEnemyMaxHealth = 5 + (newLevel * 5);
+                                setEnemyMaxHealth(newEnemyMaxHealth);
+                                return newLevel; 
+                            });
+                            setEnemyCount(1);
                         }
                     }
                 }
@@ -206,9 +213,9 @@ function Dungeon({ navigation, route }) {
         <ImageBackground source={backgroundImage} style={styles.background}>
             <View style={styles.container}>
 
-                <Text style={styles.enemyCounter}>Monster {enemyCount}/5</Text>
-
-                <Text style={styles.enemyHealth}>Enemy Health: {enemyHealth}/10</Text>
+                <Text style={styles.enemyCounter}>Monster {enemyCount}/5                  Level: {level}</Text>
+        
+                <Text style={styles.enemyHealth}>Enemy Health: {enemyHealth}/{enemyMaxHealth}</Text>
 
                 <Image source={monsterImage1} style={styles.monster} />
 
