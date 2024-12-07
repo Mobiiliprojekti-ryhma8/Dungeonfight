@@ -3,6 +3,7 @@ import { Alert, Button, Text, View, Image, StyleSheet, ImageBackground } from 'r
 import DamageAnimation from '../animations/DamageAnimation';
 import warriorImage from '../assets/Warrior.png';
 import monsterImage1 from '../assets/Enemy1.png';
+import wizardImage from '../assets/wizard.png';
 import backgroundImage from '../assets/background.jpg';
 import { Audio } from "expo-av";
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -228,8 +229,11 @@ function Dungeon({ navigation, route }) {
                         disabled={healUses === 0 || playerHealth === maxHp || isGameFinished} 
                     />
                 </View>
-                
+                {hero.heroClass === 'warrior' ? (
                 <Image source={warriorImage} style={styles.warrior} />
+            ) : (
+                <Image source={wizardImage} style={styles.wizard} />
+            )}
 
                 <DamageAnimation key={`enemy-damage-${damageKey}`} damage={enemyDamage} isPlayerDamage={true} />
 
@@ -309,7 +313,7 @@ const styles = StyleSheet.create({
     monster: {
         position: 'absolute',
         top: 300,
-        width: 120,
+        width: 150,
         height: 150,
         resizeMode: 'contain',
     },
@@ -319,6 +323,14 @@ const styles = StyleSheet.create({
         left: 20,
         width: 150,
         height: 180,
+        resizeMode: 'contain',
+    },
+    wizard: {
+        position: 'absolute',
+        bottom: 50,
+        left: 10,
+        width: 200,
+        height: 250,
         resizeMode: 'contain',
     },
     audioControlContainer: {
