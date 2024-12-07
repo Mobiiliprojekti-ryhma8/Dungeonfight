@@ -9,7 +9,7 @@ import backgroundImage from '../assets/background.jpg';
 import monsterImage1 from '../assets/Enemy1.png';
 import warriorImage from '../assets/Warrior.png';
 import wizardImage from '../assets/wizard.png';
-import { updateGold, updateMonstersDeafeated, updateStatus } from '../firebase/Config';
+import { updateGold, updateMonstersDeafeated, updateStatus, updateLevel } from '../firebase/Config';
 
 function Dungeon({ navigation, route }) {
     const {hero} = route.params
@@ -28,11 +28,14 @@ function Dungeon({ navigation, route }) {
     const [volume, setVolume] = useState(1); 
     const [isMuted, setIsMuted] = useState(false); 
     const [totalGold, setGold] = useState(0)
-    const [level, setLevel] = useState(1);
+    const [level, setLevel] = useState(hero.level);
     const [enemyMaxHealth, setEnemyMaxHealth] = useState(10); 
 
 
+
     useEffect(() => {
+        setEnemyHealth(8 + level * 2)
+        setEnemyMaxHealth(8 + level * 2)
         const setupDungeonAudio = async () => {
             try {
                 if (!soundRef.current) {
@@ -105,6 +108,11 @@ function Dungeon({ navigation, route }) {
                         {
                             text: "Yes",
                             onPress: () => {
+                                async function killPlayer() {
+                                    await  updateStatus(hero.name, "dead")
+                                    await deleteCharacter(hero)
+                                  }
+                                killPlayer()
                                 navigation.dispatch(e.data.action);
                             },
                         },
@@ -115,6 +123,27 @@ function Dungeon({ navigation, route }) {
             return unsubscribe;
         }
     }, [navigation, isGameFinished]);
+
+    const saveLevel = async (hero) => {
+        try {
+            const storedHeroes = await AsyncStorage.getItem('heroes');
+            const heroes = storedHeroes ? JSON.parse(storedHeroes) : [];
+    
+            const heroIndex = heroes.findIndex((h) => h.name === hero.name);
+
+            console.log(`tässä levu ${heroes[heroIndex].level}`)
+            
+            heroes[heroIndex].level += 1;
+
+            console.log(`tässä toka levu ${heroes[heroIndex].level}`)
+    
+            await AsyncStorage.setItem('heroes', JSON.stringify(heroes));
+            updateLevel(heroes[heroIndex].name, heroes[heroIndex].level)
+            navigation.navigate('StartDungeon', {hero: heroes[heroIndex]})
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const generateDrop = () => {
         const randPercentage = Math.random() * 100;
@@ -187,19 +216,16 @@ function Dungeon({ navigation, route }) {
                         if (enemyCount < 5) {
                             setEnemyCount(enemyCount + 1);
                             setVictory(false);
-                            setEnemyHealth(prevHealth => 5 + (level * 5)); 
-                            const newEnemyMaxHealth = 5 + (level * 5);
-                            setEnemyMaxHealth(newEnemyMaxHealth);
+                            setEnemyHealth(prevHealth => 8 + (level * 2)); 
                         } else {
-                            setLevel(prevLevel => {
-                                Alert.alert(`Congratulations, you beat level ${level}! Next level enemies are stronger.`)
-                                const newLevel = prevLevel + 1;
-                                setEnemyHealth(5 + (newLevel * 5)); 
-                                const newEnemyMaxHealth = 5 + (newLevel * 5);
-                                setEnemyMaxHealth(newEnemyMaxHealth);
-                                return newLevel; 
-                            });
-                            setEnemyCount(1);
+                            setIsGameFinished(true)
+                            Alert.alert(`Congratulations, you beat level ${level}!`, 'You can now visit shop to upgrade your hero.', [
+                                {
+                                    text: "OK", onPress: () => {
+                                        saveLevel(hero)
+                                    }
+                                }
+                            ]);
                         }
                     }
                 }

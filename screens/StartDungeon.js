@@ -32,6 +32,7 @@ export default function StartDungeon({ navigation, route }) {
       <Text>Health: {currentHero.health}</Text>
       <Text>Damage: {currentHero.damage}</Text>
       <Text>Gold: {currentHero.gold}</Text>
+      <Text>Level: {currentHero.level}</Text>
 
       <Button
         title="Start Dungeon"
