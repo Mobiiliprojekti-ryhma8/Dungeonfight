@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
-import { Alert, Button, Text, TextInput, View } from 'react-native';
+import { Alert, TouchableOpacity, Text, TextInput, View, StyleSheet, ImageBackground } from 'react-native';
 import { addHero } from '../firebase/Config';
+import backgroundImage from '../assets/background.jpg';
 
 const CreateCharacter = () => {
   const [name, setName] = useState('');
@@ -58,39 +59,66 @@ const CreateCharacter = () => {
   };
 
   return (
+    <ImageBackground source={backgroundImage} style={styles.background}>
     <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 18, marginBottom: 10 }}>Create a New Hero</Text>
+      <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>Create a New Hero</Text>
 
       {}
-      <Text>Name:</Text>
+      <Text style={styles.text}>Name:</Text>
       <TextInput
         style={{
           borderWidth: 1,
           borderColor: 'gray',
           padding: 10,
           marginBottom: 15,
+          color: 'white'
         }}
         placeholder="Name your hero"
+        placeholderTextColor="#FFFFFF"
         value={name}
         onChangeText={setName}
       />
 
       {}
-      <Text>Choose class:</Text>
+      <Text style={styles.text}>Choose class:</Text>
       <Picker
         selectedValue={heroClass}
         onValueChange={(itemValue) => setHeroClass(itemValue)}
-        style={{ marginBottom: 15 }}
+        style={{ marginBottom: 15, color: 'white'}}
       >
-        <Picker.Item label="Select Class" value="" />
-        <Picker.Item label="Warrior" value="warrior" />
-        <Picker.Item label="Wizard" value="wizard" />
+        <Picker.Item label="Select Class" value="" color= 'white' />
+        <Picker.Item label="Warrior" value="warrior" color='white' />
+        <Picker.Item label="Wizard" value="wizard" color='white' />
       </Picker>
 
       {}
-      <Button title="Create Hero" onPress={handleCreateHero} />
+      <TouchableOpacity style={styles.button} onPress={handleCreateHero}>
+          <Text style={styles.buttonText}>Create Hero</Text>
+        </TouchableOpacity>
     </View>
+    </ImageBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+  },
+  text: {
+    color: 'white'
+  },
+  button: {
+    backgroundColor: '#8b0000',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+});
 
 export default CreateCharacter;
