@@ -1,6 +1,6 @@
 import { FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_AUTH_DOMAIN, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET } from '@env';
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { addDoc, collection, deleteDoc, getDocs, getFirestore, orderBy, query, where, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, getDocs, getFirestore, orderBy, query, updateDoc, where } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
@@ -129,9 +129,27 @@ async function updateGold(name, amount) {
     console.error(error);
   }
 }
+async function updateMonstersDeafeated(name, amount) {
+  try {
+    console.log("monsut tapettu: "+amount);
+    
+    const heroesQuery = query(heroesCollection, where("name", "==", name));
+    const snapshot = await getDocs(heroesQuery);
 
+    snapshot.forEach(async (docSnapshot) => {
+
+      const updatedData = {};
+
+      updatedData.monsters_defeated = amount
+
+      await updateDoc(docSnapshot.ref, updatedData);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
 export {
   addDoc,
-  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateHero, updateGold
+  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateGold, updateHero, updateMonstersDeafeated
 };
 
