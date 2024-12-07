@@ -1,6 +1,6 @@
 import { FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_AUTH_DOMAIN, FIREBASE_MESSAGING_SENDER_ID, FIREBASE_PROJECT_ID, FIREBASE_STORAGE_BUCKET } from '@env';
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { addDoc, collection, deleteDoc, getDocs, getFirestore, orderBy, query, where, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, getDocs, getFirestore, orderBy, query, updateDoc, where } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
@@ -30,7 +30,8 @@ async function addHero(name, heroClass, gold, health, damage,level,monsters_defe
       health: health,
       damage: damage,
       level: level,
-      monsters_defeated: monsters_defeated
+      monsters_defeated: monsters_defeated,
+      status: "alive"
     });
   } catch (e) {
     console.error("Error adding hero: ", e);
@@ -57,7 +58,8 @@ async function HighscoresCall(heroClass = null) {
         name: doc.data().name,
         class: doc.data().class,
         monsters_defeated: doc.data().monsters_defeated,
-        level: doc.data().level
+        level: doc.data().level,
+        status: doc.data().status  
       };
       // If a heroClass filter is set, apply it manually
       if (!heroClass || hero.class === heroClass) {
@@ -130,8 +132,26 @@ async function updateGold(name, amount) {
   }
 }
 
+async function updateStatus(name, status) {
+  try {
+    const heroesQuery = query(heroesCollection, where("name", "==", name));
+    const snapshot = await getDocs(heroesQuery);
+
+    snapshot.forEach(async (docSnapshot) => {
+
+      const updatedData = {};
+
+      updatedData.status = status
+
+      await updateDoc(docSnapshot.ref, updatedData);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export {
   addDoc,
-  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateHero, updateGold
+  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateGold, updateHero
 };
 

@@ -15,14 +15,17 @@ export default function Highscores({ navigation }) {
     
     let heroData = await HighscoresCall(luokka)
 
-    //console.log("heroes for highscores",heroData);
+    console.log("heroes for highscores",heroData);
     
     setHeroes(heroData)
     
   }
   const Item = ({ hero }) => (
+    
     <View>
-        <Text style={styles.herolist}>{hero.id+" "}{hero.name+" "} {"monsters defeated "+ hero.monsters_defeated}</Text>
+        <Text style={[
+                styles.herolist,
+                hero.status == "dead" ? styles.deadHero : null]}>{hero.id+" "}{hero.name+" "} {"monsters defeated "+ hero.monsters_defeated}</Text>
     </View>
 );
   return (
@@ -81,5 +84,10 @@ const styles = StyleSheet.create({
   justifyContent: 'space-between',
   width: '80%',
   paddingBottom: 20,
-}
+},
+deadHero: {
+  textDecorationLine: 'line-through',
+  textDecorationStyle: 'solid',      
+ // textDecorationColor: 'red',        
+},
 })
