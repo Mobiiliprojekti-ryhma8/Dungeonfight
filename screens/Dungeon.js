@@ -9,7 +9,7 @@ import backgroundImage from '../assets/background.jpg';
 import monsterImage1 from '../assets/Enemy1.png';
 import warriorImage from '../assets/Warrior.png';
 import wizardImage from '../assets/wizard.png';
-import { updateGold, updateMonstersDeafeated } from '../firebase/Config';
+import { updateGold, updateMonstersDeafeated, updateStatus } from '../firebase/Config';
 
 function Dungeon({ navigation, route }) {
     const {hero} = route.params
@@ -84,6 +84,8 @@ function Dungeon({ navigation, route }) {
             await saveHeroToStorage(hero);
             updateGold(hero.name, hero.gold)
             updateMonstersDeafeated(hero.name,hero.monsters_defeated)
+            console.log(hero.monsters_defeated);
+            
         };
     
         updateHeroGold();
@@ -131,7 +133,23 @@ function Dungeon({ navigation, route }) {
     
         return dropValue;
     };
-
+    async function deleteCharacter(item) {
+        console.log(item.nam+"äääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääää");
+        
+        try {
+         
+          const storedHeroes = await AsyncStorage.getItem('heroes')
+          const heroesList = storedHeroes ? JSON.parse(storedHeroes) : []
+          const newList = heroesList.filter(hero => hero.name !== item.name)
+          await AsyncStorage.setItem('heroes', JSON.stringify(newList));
+          console.log("success:",item.name);
+          Alert.alert("Hero named:",item.name+ " deleted");
+          navigation.replace('ChooseHero');
+        } catch (error) {
+          console.log("Error deleting hero",item.name+":",error);
+          
+        }
+      }
     const handleFight = () => {
         const playerDamageValue = Math.floor(Math.random() * hero.damage) + 1
         console.log(hero.damage)
@@ -153,6 +171,11 @@ function Dungeon({ navigation, route }) {
             Alert.alert("Game Over", "You have been defeated!", [
                 { text: "OK", onPress: () => navigation.navigate("Home") }
             ]);
+            async function killPlayer() {
+              await  updateStatus(hero.name, "dead")
+              await deleteCharacter(hero)
+            }
+            killPlayer()
         } else if (enemyHealth - playerDamageValue <= 0) {
             const dropValue = generateDrop();
             setGold(dropValue);

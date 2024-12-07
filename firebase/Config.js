@@ -138,23 +138,12 @@ async function updateMonstersDeafeated(name, amount) {
     const heroesQuery = query(heroesCollection, where("name", "==", name));
     const snapshot = await getDocs(heroesQuery);
 
-<<<<<<< HEAD
-async function updateStatus(name, status) {
-  try {
-    const heroesQuery = query(heroesCollection, where("name", "==", name));
-    const snapshot = await getDocs(heroesQuery);
-
-=======
->>>>>>> main
     snapshot.forEach(async (docSnapshot) => {
 
       const updatedData = {};
 
-<<<<<<< HEAD
-      updatedData.status = status
-=======
       updatedData.monsters_defeated = amount
->>>>>>> main
+
 
       await updateDoc(docSnapshot.ref, updatedData);
     });
@@ -162,15 +151,25 @@ async function updateStatus(name, status) {
     console.error(error);
   }
 }
-<<<<<<< HEAD
+
+async function updateStatus(name, status) {
+  console.log("ur dead:",name, ": " , status);
+  
+  try {
+    const heroesQuery = query(heroesCollection, where("name", "==", name));
+    const snapshot = await getDocs(heroesQuery);
+    snapshot.forEach(async (docSnapshot) => {
+      const updatedData = {};
+      updatedData.status = status
+      await updateDoc(docSnapshot.ref, updatedData);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 export {
   addDoc,
-  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateGold, updateHero
-=======
-export {
-  addDoc,
-  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateGold, updateHero, updateMonstersDeafeated
->>>>>>> main
+  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateGold, updateHero, updateMonstersDeafeated, updateStatus
 };
 
