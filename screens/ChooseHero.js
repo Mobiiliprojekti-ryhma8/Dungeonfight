@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Alert, Button, FlatList, Text, View } from 'react-native';
+import { Alert, Button, FlatList, Text, View, StyleSheet, ImageBackground } from 'react-native';
 import { deleteHeroFromDatabase } from '../firebase/Config';
 import { useFocusEffect } from '@react-navigation/native';
+import backgroundImage from '../assets/background.jpg';
 
 export default function ChooseHero({navigation}) {
   const [heroes, setHeroes] = useState([])
@@ -43,11 +44,11 @@ export default function ChooseHero({navigation}) {
   }
   const renderHero = ({ item }) => (
     <View style={{ padding: 10, borderBottomWidth: 1, borderColor: 'gray' }}>
-      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.name}</Text>
-      <Text>Class: {item.heroClass}</Text>
-      <Text>Gold: {item.gold}</Text>
-      <Text>Health: {item.health}</Text>
-      <Text>Damage: {item.damage}</Text>
+      <Text style={{ fontSize: 18, fontWeight: 'bold', color: 'white' }}>{item.name}</Text>
+      <Text style={styles.text}>Class: {item.heroClass}</Text>
+      <Text style={styles.text}>Gold: {item.gold}</Text>
+      <Text style={styles.text}>Health: {item.health}</Text>
+      <Text style={styles.text}>Damage: {item.damage}</Text>
       <Button title='Choose Hero'
         onPress={() => navigation.navigate('StartDungeon', { hero: item })}
       ></Button>
@@ -60,8 +61,9 @@ export default function ChooseHero({navigation}) {
   );
 
   return (
+    <ImageBackground source={backgroundImage} style={styles.background}>
     <View style={{ flex: 1, alignItems: 'center', paddingTop: 20 }}>
-      <Text style={{ fontSize: 22, marginBottom: 20 }}>Choose a Hero</Text>
+      <Text style={{ fontSize: 22, marginBottom: 20, color: 'white' }}>Choose a Hero</Text>
       <FlatList
         data={heroes}
         renderItem={renderHero}
@@ -69,5 +71,16 @@ export default function ChooseHero({navigation}) {
         style={{ width: '100%' }}
       />
     </View>
+    </ImageBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  text: {
+    color: 'white'
+  },
+});

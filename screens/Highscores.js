@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { HighscoresCall } from '../firebase/Config';
+import backgroundImage from '../assets/background.jpg';
+
 export default function Highscores({ navigation }) {
   const [heroes, setHeroes] = useState([])
   const [startIndex, setStartIndex] = useState(0)
@@ -29,8 +31,9 @@ export default function Highscores({ navigation }) {
     </View>
 );
   return (
+    <ImageBackground source={backgroundImage} style={styles.background}>
     <View style={styles.container}>
-      <Text style={{fontSize: 30, padding: 10}}>Highscores</Text>
+      <Text style={{fontSize: 30, padding: 10, color: 'white'}}>Highscores</Text>
       <View style={styles.buttonContainer}>
         <Button
           title='Warriors'
@@ -63,9 +66,15 @@ export default function Highscores({ navigation }) {
           />
         </View>
     </View>
+    </ImageBackground>
   );
 }
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     alignItems: 'center', 
@@ -77,8 +86,9 @@ const styles = StyleSheet.create({
   alignItems: 'center', 
   justifyContent: 'center' ,
 },herolist: {
-  fontSize:18,
-  padding: 0
+  fontSize:20,
+  padding: 6,
+  color: 'white'
 },  buttonContainer: {
   flexDirection: 'row',
   justifyContent: 'space-between',
