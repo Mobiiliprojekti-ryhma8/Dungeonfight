@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Alert, Button, Text, View, Image, StyleSheet, ImageBackground } from 'react-native';
 import DamageAnimation from '../animations/DamageAnimation';
-import warriorImage from '../assets/Warrior.webp';
-import monsterImage1 from '../assets/Enemy1.webp';
+import warriorImage from '../assets/Warrior.png';
+import monsterImage1 from '../assets/Enemy1.png';
 import backgroundImage from '../assets/background.jpg';
 import { Audio } from "expo-av";
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -250,6 +250,13 @@ function Dungeon({ navigation, route }) {
                             value={volume}
                             onValueChange={adjustVolume}
                             step={0.01}
+                            minimumTrackTintColor="#1EB1FC"
+                            maximumTrackTintColor="#FFFFFF"
+                            trackStyle={{
+                                backgroundColor: 'white', 
+                                height: 10,               
+                                borderRadius: 5,          
+                            }}
                         />
                     )}
                 </View>
@@ -303,21 +310,21 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 300,
         width: 120,
-        height: 120,
+        height: 150,
         resizeMode: 'contain',
     },
     warrior: {
         position: 'absolute',
-        bottom: 80,
+        bottom: 50,
         left: 20,
-        width: 100,
-        height: 100,
+        width: 150,
+        height: 180,
         resizeMode: 'contain',
     },
     audioControlContainer: {
         position: 'absolute',
-        top: 20, 
-        right: 20,  
+        top: 80, 
+        right: 20,
         alignItems: 'center',
     },
     slider: {
