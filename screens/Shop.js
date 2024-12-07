@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Text, View, Button, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, Alert, ImageBackground, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { updateHero } from '../firebase/Config';
+import backgroundImage from '../assets/background.jpg';
   
 export default function Shop({ navigation, route }) {
     const { hero } = route.params;
@@ -41,20 +42,55 @@ export default function Shop({ navigation, route }) {
         Alert.alert('Not enough gold.');
       }
     };
+
+    const CustomButton = ({ title, onPress }) => (
+      <TouchableOpacity style={styles.button} onPress={onPress}>
+        <Text style={styles.buttonText}>{title}</Text>
+      </TouchableOpacity>
+    );
   
     return (
+      <ImageBackground source={backgroundImage} style={styles.background}>
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: 16 }}>You have {updatedHero.gold} gold</Text>
-        <Text style={{ fontSize: 16 }}>Health: {updatedHero.health}</Text>
-        <Text style={{ fontSize: 16 }}>Damage: {updatedHero.damage}</Text>
+        <Text style={styles.text}>You have {updatedHero.gold} gold</Text>
+        <Text style={styles.text}>Health: {updatedHero.health}</Text>
+        <Text style={styles.text}>Damage: {updatedHero.damage}</Text>
   
-        <Button title="Buy Health (100 gold)" onPress={() => handlePurchase('health')} />
-        <Button title="Buy Attack (100 gold)" onPress={() => handlePurchase('damage')} />
-        <Button
+        <CustomButton title="Buy Health (100 gold)" onPress={() => handlePurchase('health')} />
+        <CustomButton title="Buy Attack (100 gold)" onPress={() => handlePurchase('damage')} />
+        <CustomButton
           title="Return to Dungeon"
           onPress={() => navigation.navigate('StartDungeon', { hero: updatedHero })}
         />
       </View>
+      </ImageBackground>
     );
 }
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+  },
+  text: {
+    color: 'white',
+    fontSize: 16,
+    padding: 3,
+  },
+  button: {
+    backgroundColor: '#8b0000',
+    paddingVertical: 12,
+    paddingHorizontal: 36,
+    borderRadius: 16,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+});
   
