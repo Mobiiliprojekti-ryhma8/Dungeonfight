@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Alert, Button, Text, View, Image, StyleSheet, ImageBackground } from 'react-native';
-import DamageAnimation from '../animations/DamageAnimation';
-import warriorImage from '../assets/Warrior.png';
-import monsterImage1 from '../assets/Enemy1.png';
-import wizardImage from '../assets/wizard.png';
-import backgroundImage from '../assets/background.jpg';
-import { Audio } from "expo-av";
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Slider from '@react-native-community/slider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { updateGold } from '../firebase/Config';
+import Slider from '@react-native-community/slider';
+import { Audio } from "expo-av";
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Button, Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import DamageAnimation from '../animations/DamageAnimation';
+import backgroundImage from '../assets/background.jpg';
+import monsterImage1 from '../assets/Enemy1.png';
+import warriorImage from '../assets/Warrior.png';
+import wizardImage from '../assets/wizard.png';
+import { updateGold, updateMonstersDeafeated } from '../firebase/Config';
 
 function Dungeon({ navigation, route }) {
     const {hero} = route.params
@@ -80,8 +80,10 @@ function Dungeon({ navigation, route }) {
     useEffect(() => {
         const updateHeroGold = async () => {
             hero.gold += totalGold;
+            hero.monsters_defeated += 1;
             await saveHeroToStorage(hero);
             updateGold(hero.name, hero.gold)
+            updateMonstersDeafeated(hero.name,hero.monsters_defeated)
         };
     
         updateHeroGold();
@@ -133,7 +135,7 @@ function Dungeon({ navigation, route }) {
     const handleFight = () => {
         const playerDamageValue = Math.floor(Math.random() * hero.damage) + 1
         console.log(hero.damage)
-
+        console.log("testi: "+ hero.monsters_defeated);
         //const playerDamageValue = Math.floor(Math.random() * 5) + 1; // Player damage between 1 and 5
         const enemyDamageValue = Math.floor(Math.random() * 3) + level; // Enemy damage between 1 and 3
 
