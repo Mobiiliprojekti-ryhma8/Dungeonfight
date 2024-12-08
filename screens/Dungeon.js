@@ -180,6 +180,17 @@ function Dungeon({ navigation, route }) {
         }
       }
     const handleFight = () => {
+        if(hero.heroClass === 'warrior') {
+            const { sound } = Audio.Sound.createAsync(
+                require('../audio/warrior.mp3'),
+                { shouldPlay: true, isLooping: false }
+            )
+        } else {
+            const { sound } = Audio.Sound.createAsync(
+                require('../audio/wizard.mp3'),
+                { shouldPlay: true, isLooping: false }
+            )
+        }
         const playerDamageValue = Math.floor(Math.random() * hero.damage) + 1
         console.log(hero.damage)
         console.log("testi: "+ hero.monsters_defeated);
