@@ -168,8 +168,26 @@ async function updateStatus(name, status) {
   }
 }
 
+async function updateLevel(name, level) {
+  try {
+    const heroesQuery = query(heroesCollection, where("name", "==", name));
+    const snapshot = await getDocs(heroesQuery);
+
+    snapshot.forEach(async (docSnapshot) => {
+
+      const updatedData = {};
+
+      updatedData.level = level
+
+      await updateDoc(docSnapshot.ref, updatedData);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export {
   addDoc,
-  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateGold, updateHero, updateMonstersDeafeated, updateStatus
+  addHero, collection, deleteHeroFromDatabase, firestore, HighscoresCall, updateGold, updateHero, updateMonstersDeafeated, updateStatus, updateLevel
 };
 

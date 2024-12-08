@@ -40,6 +40,7 @@ export default function StartDungeon({ navigation, route }) {
       <Text style={styles.text}>Health: {currentHero.health}</Text>
       <Text style={styles.text}>Damage: {currentHero.damage}</Text>
       <Text style={styles.text}>Gold: {currentHero.gold}</Text>
+      <Text style={styles.text}>Level: {currentHero.level}</Text>
 
       <CustomButton
           title="Start Dungeon"
