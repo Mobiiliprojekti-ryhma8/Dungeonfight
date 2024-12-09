@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import { Alert, TouchableOpacity, Text, TextInput, View, StyleSheet, ImageBackground } from 'react-native';
 import { addHero } from '../firebase/Config';
 import backgroundImage from '../assets/background.jpg';
+import { useNavigation } from '@react-navigation/native';
 
 const CreateCharacter = () => {
   const [name, setName] = useState('');
   const [heroClass, setHeroClass] = useState('');
+  const navigation = useNavigation();
 
   const handleCreateHero = async () => {
     if(heroClass === '') {
@@ -52,6 +54,7 @@ const CreateCharacter = () => {
       Alert.alert(`${heroClass} has been created!`);
       setName('');
       setHeroClass('');
+      navigation.navigate('Home');
     } catch (error) {
       console.error('Error creating hero:', error);
       Alert.alert('Failed to create hero');

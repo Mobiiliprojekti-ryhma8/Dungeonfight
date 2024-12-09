@@ -163,7 +163,7 @@ function Dungeon({ navigation, route }) {
         return dropValue;
     };
     async function deleteCharacter(item) {
-        console.log(item.nam+"äääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääää");
+        console.log(item.name+"äääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääääää");
         
         try {
          
@@ -172,8 +172,8 @@ function Dungeon({ navigation, route }) {
           const newList = heroesList.filter(hero => hero.name !== item.name)
           await AsyncStorage.setItem('heroes', JSON.stringify(newList));
           console.log("success:",item.name);
-          Alert.alert("Hero named:",item.name+ " deleted");
-          navigation.replace('ChooseHero');
+          Alert.alert("Hero named:",item.name+ " has died");
+          navigation.replace('Home');
         } catch (error) {
           console.log("Error deleting hero",item.name+":",error);
           
